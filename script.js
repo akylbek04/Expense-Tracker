@@ -11,6 +11,16 @@ const localStorageTransactions = JSON.parse(localStorage.getItem("transaction"))
 let transactions = localStorageTransactions !== null ? localStorageTransactions : [] ;
 
 
+const starter = () => {
+    transactionList.innerHTML = "";
+    
+    updateDOMValues();
+    transactions.forEach(transaction => addTransactionToHistory(transaction));
+}
+
+starter();
+
+
 form.addEventListener("submit", (event) => {
     event.preventDefault();
     doStaff();
@@ -48,12 +58,21 @@ const addTransactionToHistory = (transaction) => {
     const customSign = amount < 0 ? '-' : '+'
     const historyItem = `
     <li class=${customClass}>
-         ${text}<span>${customSign}$${Math.abs(amount)}</span><button class="delete-btn">x</button>
+         ${text}<span>${customSign}$${Math.abs(amount)}</span><button onclick='deleteHistory(${id})' class="delete-btn">x</button>
     </li> 
     `
 
+
     transactionList.innerHTML += historyItem;
 
+    
+}
+
+const deleteHistory = (id) => {
+    transactions = transactions.filter(el => el.id !== id);
+    updateLocalStorage();
+
+    starter();
 }
 
 const updateLocalStorage = () => {
@@ -71,7 +90,8 @@ const updateDOMValues = () => {
     const incomes = amounts.filter(el => el > 0).reduce((acc, el) => acc+el, 0).toFixed(2);
     const expenses = (amounts.filter(el => el < 0).reduce((acc, el) => acc+el, 0) * -1).toFixed(2);
 
-    balanceEl.innerText = `$${balanceTotal}`;
+    const customSign = balanceTotal < 0 ? "-" : "+"
+    balanceEl.innerText = `${customSign}$${Math.abs(balanceTotal)}`;
     moneyMinusEl.innerText = `-$${expenses}`;
     moneyPlusEl.innerText = `+$${incomes}`;
 }
