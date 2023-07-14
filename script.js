@@ -28,8 +28,11 @@ const doStaff = () => {
 
         transactions.push(transaction);
         
-        updateLocalStorage();
+        addTransactionToHistory(transaction);
+
         updateDOMValues();
+
+        updateLocalStorage();
          
         console.log(transaction);
         console.log(transactions);
@@ -37,6 +40,20 @@ const doStaff = () => {
         textInput.value = '';
         amountInput.value = '';
     }
+}
+
+const addTransactionToHistory = (transaction) => {
+    const { text, amount, id } = transaction;
+    const customClass = amount < 0 ? 'minus' : 'plus'
+    const customSign = amount < 0 ? '-' : '+'
+    const historyItem = `
+    <li class=${customClass}>
+         ${text}<span>${customSign}$${Math.abs(amount)}</span><button class="delete-btn">x</button>
+    </li> 
+    `
+
+    transactionList.innerHTML += historyItem;
+
 }
 
 const updateLocalStorage = () => {
